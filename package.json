@@ -1,6 +1,6 @@
 {
   "name": "@ivva/ivva-crx-sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "ivva / 客户 ATS ↔ 招聘助手 Next：轻量 postMessage SDK（无页面业务注入）",
   "type": "module",
   "main": "./dist/ivva-crx-sdk.umd.cjs",

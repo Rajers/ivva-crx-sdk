@@ -10,15 +10,18 @@
 
 | 文档 | 说明 |
 |------|------|
-| [customer-sdk-integration.md](../sfHelp_crx_next/docs/customer-sdk-integration.md) | 对接方案 |
-| [sdk-command-catalog.md](../sfHelp_crx_next/docs/sdk-command-catalog.md) | **对外 API 总表**（发布/上下架/状态/详情/登录态/Token/全景搜） |
+| [docs/customer-sdk-integration.md](./docs/customer-sdk-integration.md) | 对接方案 |
+| [docs/sdk-command-catalog.md](./docs/sdk-command-catalog.md) | 对外 API 总表（发布/上下架/状态/详情/登录态/Token/全景搜） |
 
 ## 安装
 
 ```bash
-npm i @ivva/ivva-crx-sdk
-# 或本地：npm i ../ivva-crx-sdk
+npm i github:Rajers/ivva-crx-sdk#v0.1.0
+# 或跟 main：
+# npm i github:Rajers/ivva-crx-sdk
 ```
+
+安装时会跑 `prepare` → 自动 `npm run build` 生成 `dist/`。
 
 ## 用法（摘要）
 
@@ -51,8 +54,8 @@ btn.addEventListener('click', () => {
 npm run build
 ```
 
-- `dist/ivva-crx-sdk.js` — ESM  
-- `dist/ivva-crx-sdk.umd.cjs` — IIFE，全局 `IvvaCrxSdk`  
+- `dist/ivva-crx-sdk.js` — ESM
+- `dist/ivva-crx-sdk.umd.cjs` — IIFE，全局 `IvvaCrxSdk`
 
 ## 错误码（常见）
 
