@@ -1,7 +1,7 @@
 /**
  * @ivva/ivva-crx-sdk — 客户页唯一对接入口
  * 协议：window.postMessage ↔ 扩展 Content Script（ivva-web / ivva-crx）
- * 不做页面业务注入；UI 与执行在 CRX。
+ * 不做页面业务注入；UI 与执行在 CRX；页面侧等待 done / fail 终态。
  */
 
 const SOURCE_WEB = 'ivva-web'
