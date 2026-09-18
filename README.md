@@ -16,7 +16,7 @@
 ## 安装
 
 ```bash
-npm i github:Rajers/ivva-crx-sdk#v0.1.1
+npm i github:Rajers/ivva-crx-sdk#v0.1.2
 # 或跟 main：
 # npm i github:Rajers/ivva-crx-sdk
 ```

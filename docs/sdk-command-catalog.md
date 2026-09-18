@@ -1,27 +1,4 @@
-# SDK 命令目录（对外 API）
-
-> 隶属 [customer-sdk-integration.md](./customer-sdk-integration.md)  
-> 包：`@ivva/ivva-crx-sdk`（本仓库）  
-> 统一入口：`crx.invoke(command, payload)`；另有 `setToken` / `publish` 等糖。  
-> CRX 内部仍可保留旧 `#plug_trigger` status；SDK **不**暴露 DOM。
-
----
-
-## 1. 信封（protocol v1）
-
-与现网 `ivva-web` / `ivva-crx` 一致：
-
-| 方向 | 关键字段 |
-|------|----------|
-| 页→扩展 | `source:'ivva-web'`, `v:1`, `event:'start'`, `taskId`, `type`(=command), `payload` |
-| 扩展→页 | `source:'ivva-crx'`, `v:1`, `taskId`, `type`, `event:'announce'\|'progress'\|'done'\|'fail'`, `data` / `error` |
-
-- 长任务可有 `progress`；**客户 SDK 首发可忽略，只死等 `done`/`fail`**。  
-- `fail.error.action` 建议：`retry` | `login` | `upgrade` | `refresh_page` | `none`。
-
----
-
-## 2. 业务能力 ↔ API 总表（客户首发）
+## 业务能力 ↔ API 总表（客户首发）
 
 | # | 能力 | command | 旧 status 别名 | SDK 写法 | 主要 payload | 默认超时 | 需用户手势 | UI 在哪 | 状态 |
 |---|------|---------|----------------|----------|--------------|----------|------------|---------|------|
@@ -33,13 +10,13 @@
 | 6 | 设置 ivvaToken（鉴权） | `auth.setToken` | `setIvvaToken` | `setToken(token)` | `token` / `ivvaToken` | 15s | 否 | 无 | 已接线 |
 | 7 | 全景搜索 | `sf.openSidePanel` | `openSidePanel` / `openPanel` / `sidePanel` | `invoke('sf.openSidePanel', {})` | `{}` | 15s | **必须用户点击** | **Side Panel**（产品定为仅搜） | 已接线 |
 
-附属（同命令族，非独立能力名）：
+<!-- 附属（同命令族，非独立能力名）：
 
 | 能力 | command | action / 说明 |
 |------|---------|----------------|
 | 刷新外网职位 | `position.channelStatus` | `action:'refresh'`（旧 status `refresh`） |
 | 探测能力 | `crx.getCapabilities` | 拉完整 capabilities |
-| 更新插件 | `crx.updatePlugin` | 旧 `updatePlugin` |
+| 更新插件 | `crx.updatePlugin` | 旧 `updatePlugin` | -->
 
 **全景搜索说明**：客户首发对外 API = **打开侧栏**；搜条件与结果 UI 全在 Panel。插件内部另有 `resume.search` 等，**暂不作为客户主 API**。
 
