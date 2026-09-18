@@ -1,14 +1,16 @@
 ## 业务能力 ↔ API 总表（客户首发）
 
-| # | 能力 | command | 旧 status 别名 | SDK 写法 | 主要 payload | 默认超时 | 需用户手势 | UI 在哪 | 状态 |
-|---|------|---------|----------------|----------|--------------|----------|------------|---------|------|
-| 1 | 一键职位发布 | `position.publish` | `positionRelease` / `positionUpdate` / `positionUpload` | `publish({ positionId })` 或 `invoke(...)` | `positionId`；可选 `channel`（不带则插件内选渠） | 600s | 建议在点击里调 | **PublishHost**（选渠/探缺/确认） | 已接线 |
-| 2 | 职位上下架 | `position.channelStatus` | `updateChannePositionStatus` / `uploadChannePositionStatus` | `invoke('position.channelStatus', …)` | `action:'update'`, `positionId`, `channel`, `positionRealStatus` | 180s | 否 | 插件执行 | 已有 runner |
-| 3 | 获取外网职位当前状态 | `position.channelStatus` | `getChannePositionStatus` | 同上 | `action:'get'`, `positionId`；可选 `channel` | 180s | 否 | 无大弹层 | 已有 |
-| 4 | 跳转外网职位详情 | `position.openExternal` | `toPositonDetail` / `toPositionDetail` | `invoke('position.openExternal', …)` | `positionId`, `channel` | 60s | 否 | 开外网 Tab | 已有 |
-| 5 | 获取渠道登录状态 | `channel.loginStatus` | `getChanneLoginStatus` | `invoke('channel.loginStatus', …)` | 可选 `channels: ['boss','lp','zl','qc']` | 60s | 否 | 无 | 已有 |
-| 6 | 设置 ivvaToken（鉴权） | `auth.setToken` | `setIvvaToken` | `setToken(token)` | `token` / `ivvaToken` | 15s | 否 | 无 | 已接线 |
-| 7 | 全景搜索 | `sf.openSidePanel` | `openSidePanel` / `openPanel` / `sidePanel` | `invoke('sf.openSidePanel', {})` | `{}` | 15s | **必须用户点击** | **Side Panel**（产品定为仅搜） | 已接线 |
+> 窄表 + 单元格内换行；旧 status / SDK / payload / UI 叠在「command · 说明」列。细节见后文 §5。
+
+| # | 能力 | command · 说明 | 超时 |
+|---|------|----------------|------|
+| 1 | 一键职位发布<br>**已接线** | `position.publish`<br>旧：`positionRelease` / `positionUpdate` / `positionUpload`<br>SDK：`publish({ positionId })` 或 `invoke(...)`<br>payload：`positionId`；可选 `channel`（不带则插件内选渠）<br>UI：**PublishHost**（选渠 / 探缺 / 确认） · 建议在点击里调 | 600s |
+| 2 | 职位上下架<br>已有 runner | `position.channelStatus`<br>旧：`updateChannePositionStatus` / `uploadChannePositionStatus`<br>SDK：`invoke('position.channelStatus', …)`<br>payload：`action:'update'`, `positionId`, `channel`, `positionRealStatus`<br>UI：插件执行 | 180s |
+| 3 | 获取外网职位当前状态<br>已有 | `position.channelStatus`<br>旧：`getChannePositionStatus`<br>SDK：同上<br>payload：`action:'get'`, `positionId`；可选 `channel`<br>UI：无大弹层 | 180s |
+| 4 | 跳转外网职位详情<br>已有 | `position.openExternal`<br>旧：`toPositonDetail` / `toPositionDetail`<br>SDK：`invoke('position.openExternal', …)`<br>payload：`positionId`, `channel`<br>UI：开外网 Tab | 60s |
+| 5 | 获取渠道登录状态<br>已有 | `channel.loginStatus`<br>旧：`getChanneLoginStatus`<br>SDK：`invoke('channel.loginStatus', …)`<br>payload：可选 `channels: ['boss','lp','zl','qc']`<br>UI：无 | 60s |
+| 6 | 设置 ivvaToken（鉴权）<br>**已接线** | `auth.setToken`<br>旧：`setIvvaToken`<br>SDK：`setToken(token)`<br>payload：`token` / `ivvaToken`<br>UI：无 | 15s |
+| 7 | 全景搜索<br>**已接线** | `sf.openSidePanel`<br>旧：`openSidePanel` / `openPanel` / `sidePanel`<br>SDK：`invoke('sf.openSidePanel', {})`<br>payload：`{}`<br>UI：**Side Panel**（仅搜） · **必须用户点击** | 15s |
 
 <!-- 附属（同命令族，非独立能力名）：
 
