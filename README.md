@@ -4,19 +4,19 @@
 
 - 页内 `postMessage`（`ivva-web` / `ivva-crx`）
 - **不向页面注入业务 API**
-- 业务 UI 在扩展内；页面侧死等 `done` / `fail`
+- 业务 UI 在扩展内；页面侧等待 `done` / `fail`
 
 ## 文档
 
 | 文档 | 说明 |
 |------|------|
-| [docs/customer-sdk-integration.md](./docs/customer-sdk-integration.md) | 对接方案 |
+<!-- | [docs/customer-sdk-integration.md](./docs/customer-sdk-integration.md) | 对接方案 | -->
 | [docs/sdk-command-catalog.md](./docs/sdk-command-catalog.md) | 对外 API 总表（发布/上下架/状态/详情/登录态/Token/全景搜） |
 
 ## 安装
 
 ```bash
-npm i github:Rajers/ivva-crx-sdk#v0.1.0
+npm i github:Rajers/ivva-crx-sdk#v0.1.1
 # 或跟 main：
 # npm i github:Rajers/ivva-crx-sdk
 ```

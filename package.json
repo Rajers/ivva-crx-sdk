@@ -14,6 +14,7 @@
   "files": [
     "dist",
     "src",
+    "docs",
     "README.md"
   ],
   "scripts": {
