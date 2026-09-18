@@ -1,0 +1,31 @@
+{
+  "name": "@ivva/ivva-crx-sdk",
+  "version": "0.1.0",
+  "description": "ivva / 客户 ATS ↔ 招聘助手 Next：轻量 postMessage SDK（无页面业务注入）",
+  "type": "module",
+  "main": "./dist/ivva-crx-sdk.umd.cjs",
+  "module": "./dist/ivva-crx-sdk.js",
+  "exports": {
+    ".": {
+      "import": "./dist/ivva-crx-sdk.js",
+      "require": "./dist/ivva-crx-sdk.umd.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/build.mjs --watch",
+    "prepare": "npm run build"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  }
+}
