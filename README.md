@@ -44,7 +44,7 @@ await crx.invoke('channel.loginStatus', {
 })
 
 btn.addEventListener('click', () => {
-  // 全景搜索（须用户手势）；可预填，详见命令目录 §5.6
+  // 全景搜索（须用户手势）；可预填，详见命令目录 §4.6
   void crx.invoke('sf.openSidePanel', {
     mode: 'nl',
     text: '北京 5年 Java',

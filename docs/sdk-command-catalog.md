@@ -1,6 +1,6 @@
-## 业务能力 ↔ API 总表（客户首发）
+## 1. 业务能力 ↔ API 总表（客户首发）
 
-> 窄表 + 单元格内换行；旧 status / SDK / payload / UI 叠在「command · 说明」列。细节见后文 §5。
+> 窄表 + 单元格内换行；旧 status / SDK / payload / UI 叠在「command · 说明」列。细节见后文 §4。
 
 | # | 能力 | command · 说明 | 超时 |
 |---|------|----------------|------|
@@ -10,7 +10,7 @@
 | 4 | 跳转外网职位详情<br>已有 | `position.openExternal`<br>旧：`toPositonDetail` / `toPositionDetail`<br>SDK：`invoke('position.openExternal', …)`<br>payload：`positionId`, `channel`<br>UI：开外网 Tab | 60s |
 | 5 | 获取渠道登录状态<br>已有 | `channel.loginStatus`<br>旧：`getChanneLoginStatus`<br>SDK：`invoke('channel.loginStatus', …)`<br>payload：可选 `channels: ['boss','lp','zl','qc']`<br>UI：无 | 60s |
 | 6 | 设置 ivvaToken（鉴权）<br>**已接线** | `auth.setToken`<br>旧：`setIvvaToken`<br>SDK：`setToken(token)`<br>payload：`token` / `ivvaToken`<br>UI：无 | 15s |
-| 7 | 全景搜索<br>**已接线** | `sf.openSidePanel`<br>旧：`openSidePanel` / `openPanel` / `sidePanel`<br>SDK：`invoke('sf.openSidePanel', payload)`（须用户点击）<br>payload：见 §5.6（`mode` + `text` / `positionId` / `fileUrl`）<br>UI：**Side Panel**（仅搜） | 15s |
+| 7 | 全景搜索<br>**已接线** | `sf.openSidePanel`<br>旧：`openSidePanel` / `openPanel` / `sidePanel`<br>SDK：`invoke('sf.openSidePanel', payload)`（须用户点击）<br>payload：见 §4.6（`mode` + `text` / `positionId` / `fileUrl`）<br>UI：**Side Panel**（仅搜） | 15s |
 
 <!-- 附属（同命令族，非独立能力名）：
 
@@ -26,7 +26,7 @@
 
 ---
 
-## 3. 别名规则
+## 2. 别名规则
 
 SDK / CS 收到旧 status 时归一到上表 **command**，再执行。客户文档只写左列 command；兼容旧名便于迁移。
 
@@ -34,7 +34,7 @@ SDK / CS 收到旧 status 时归一到上表 **command**，再执行。客户文
 
 ---
 
-## 4. 推荐调用顺序
+## 3. 推荐调用顺序
 
 ```js
 import { createClient } from '@ivva/ivva-crx-sdk'
@@ -83,9 +83,9 @@ btn.addEventListener('click', () => {
 
 ---
 
-## 5. 典型 payload
+## 4. 典型 payload
 
-### 5.1 auth.setToken
+### 4.1 auth.setToken
 
 ```json
 { "token": "<ivvaToken>" }
@@ -93,7 +93,7 @@ btn.addEventListener('click', () => {
 
 亦接受 `ivvaToken`。
 
-### 5.2 position.publish
+### 4.2 position.publish
 
 ```json
 { "positionId": "12345" }
@@ -103,7 +103,7 @@ btn.addEventListener('click', () => {
 - 带 `channel`（数组或单渠）→ 可跳过选渠、直接查缺（与 Host 现逻辑一致）。  
 - ATS 最小只需 `positionId`；职位字段探缺/补全在插件内。
 
-### 5.3 position.channelStatus
+### 4.3 position.channelStatus
 
 | 字段 | 说明 |
 |------|------|
@@ -150,7 +150,7 @@ btn.addEventListener('click', () => {
 }
 ``` -->
 
-### 5.4 position.openExternal
+### 4.4 position.openExternal
 
 ```json
 {
@@ -159,7 +159,7 @@ btn.addEventListener('click', () => {
 }
 ```
 
-### 5.5 channel.loginStatus
+### 4.5 channel.loginStatus
 
 ```json
 {
@@ -169,7 +169,7 @@ btn.addEventListener('click', () => {
 
 省略时由插件默认探测首发渠。
 
-### 5.6 sf.openSidePanel
+### 4.6 sf.openSidePanel
 
 打开 Side Panel（全景搜索）。**必须在用户点击回调中** `invoke`，否则 Chrome 可能拒绝 `sidePanel.open`。
 
@@ -242,7 +242,7 @@ ATS **不传本地文件 / base64**，只传**可下载地址**；插件拉取�
 
 ---
 
-## 6. announce.data 约定
+## 5. announce.data 约定
 
 | 字段 | 含义 |
 |------|------|
@@ -250,21 +250,21 @@ ATS **不传本地文件 / base64**，只传**可下载地址**；插件拉取�
 | `profile` | `sf-test` \| `sf` |
 | `version` / `extensionId` | 清单 |
 | `types` | 内部 runner 全量 |
-| `customerCommands` | §2 对外 command 数组 |
+| `customerCommands` | §1 对外 command 数组 |
 | `needsUpdate` / `updateUrl` | 可选；升级提示 |
 
 `createClient({ profile })` 在 ready 后若与 announce 不一致 → 「连错扩展包」。
 
 ---
 
-## 7. 已拍板默认值
+## 6. 已拍板默认值
 
 | 项 | 默认 |
 |----|------|
 | 包名 | `@ivva/ivva-crx-sdk` |
 | 命令 ID | Next 风格；旧 status 作别名 |
 | publish 入参 | 最小 `positionId`；其余插件内 |
-| 超时 | 见 §2 |
+| 超时 | 见 §1 |
 | 双装 | `profile` 校验；可选 `expectedExtensionId` |
 | Token | SDK 内存 + 交给 CRX |
 | 直连 telemetry | 首发不做 |
@@ -273,13 +273,13 @@ ATS **不传本地文件 / base64**，只传**可下载地址**；插件拉取�
 
 ---
 
-## 8. 阶段勾选
+## 7. 阶段勾选
 
 - [x] K0 契约 / 命令表  
 - [x] K1 SDK 包（`e:\ivva\ivva-crx-sdk`）  
 - [~] K2 announce + 短 RPC（已接线）  
 - [~] K3 `position.publish` 等待 + PublishHost（已接线，实机持续验）  
-- [ ] K4 首发命令补齐示例与验收记录（本表 §2 七项）  
+- [ ] K4 首发命令补齐示例与验收记录（本表 §1 七项）  
 - [ ] K5 对外文档站同步  
 
 ---
