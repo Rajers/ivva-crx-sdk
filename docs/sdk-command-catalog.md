@@ -54,7 +54,7 @@ await crx.invoke('position.channelStatus', {
   action: 'update',
   positionId: '12345',
   channel: [3, 4],
-  positionRealStatus: 2, // 下架；上架用 1（与现网约定对齐）
+  positionRealStatus: 2, // 1 上架 / 2 下架 / 3 删除
 })
 
 await crx.invoke('position.openExternal', {
@@ -98,6 +98,21 @@ btn.addEventListener('click', () => {
 
 ### 5.3 position.channelStatus
 
+| 字段 | 说明 |
+|------|------|
+| `action` | `get` 查外网状态；`update` 上架 / 下架 / 删除 |
+| `positionId` | ATS 职位主键（必填） |
+| `channel` | 目标渠道；可为 apiId 数字数组（如 `[3, 4]`）或渠道 abbr（如 `'boss'`），以实现侧解析为准 |
+| `positionRealStatus` | 仅 `action:'update'` 时必填，见下表 |
+
+`positionRealStatus` 取值：
+
+| 值 | 含义 |
+|----|------|
+| `1` | 上架 |
+| `2` | 下架 |
+| `3` | 删除 |
+
 查状态：
 
 ```json
@@ -107,7 +122,7 @@ btn.addEventListener('click', () => {
 }
 ```
 
-上下架：
+上下架（示例：下架）：
 
 ```json
 {
@@ -118,7 +133,7 @@ btn.addEventListener('click', () => {
 }
 ```
 
-刷新：
+<!-- 刷新：
 
 ```json
 {
@@ -126,9 +141,7 @@ btn.addEventListener('click', () => {
   "positionId": "12345",
   "channel": [3, 4]
 }
-```
-
-`channel` 可为 apiId 数字数组或渠道 abbr（以实现侧解析为准）。
+``` -->
 
 ### 5.4 position.openExternal
 
