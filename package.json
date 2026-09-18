@@ -19,8 +19,7 @@
   ],
   "scripts": {
     "build": "node scripts/build.mjs",
-    "dev": "node scripts/build.mjs --watch",
-    "prepare": "npm run build"
+    "dev": "node scripts/build.mjs --watch"
   },
   "engines": {
     "node": ">=18"

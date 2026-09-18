@@ -21,7 +21,7 @@ npm i github:Rajers/ivva-crx-sdk#v0.1.2
 # npm i github:Rajers/ivva-crx-sdk
 ```
 
-安装时会跑 `prepare` → 自动 `npm run build` 生成 `dist/`。
+仓库已包含预构建 `dist/`，安装后即可直接用，无需本机再 build。
 
 ## 用法（摘要）
 
@@ -48,14 +48,21 @@ btn.addEventListener('click', () => {
 })
 ```
 
-## UMD
+## UMD（无 Node / 直接挂脚本）
 
-```bash
-npm run build
+仓内已带产物，也可走 jsDelivr：
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/Rajers/ivva-crx-sdk@v0.1.2/dist/ivva-crx-sdk.umd.cjs"></script>
+<script>
+  const crx = IvvaCrxSdk.createClient({ profile: 'sf-test' })
+</script>
 ```
 
 - `dist/ivva-crx-sdk.js` — ESM
 - `dist/ivva-crx-sdk.umd.cjs` — IIFE，全局 `IvvaCrxSdk`
+
+改源码后本地重编：`npm run build`（需 Node + `npm i`）。
 
 ## 错误码（常见）
 
