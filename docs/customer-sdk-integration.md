@@ -20,7 +20,7 @@
 
 | 角色 | 做什么 |
 |------|--------|
-| ATS | 传业务主键（如 `positionId`）→ 调 SDK → 按钮转圈 → **死等** Promise → 关转圈 / 刷新列表 |
+| ATS | 传业务主键（如 `positionId`）→ 调 SDK → 按钮转圈 → **等待** Promise → 关转圈 / 刷新列表 |
 | 插件 | **全部交互 UI**：探缺、补字段、登录引导、超时重试、成功失败提示（PublishHost / Side Panel 等） |
 
 客户页**不需要**进度回调、不需要嵌发布表单。
@@ -53,7 +53,7 @@ npm SDK 直接 `postMessage`；插件 Content Script **本就能**听到同页�
 │  依赖：轻量 SDK（npm 主交付；UMD 见 README）     │
 └────────────────────┬─────────────────────────┘
                      │ createClient / ready / setToken
-                     │ invoke(command, payload)  死等终态
+                     │ invoke(command, payload)  等待终态
                      │ window.postMessage
                      ▼
 ┌──────────────────────────────────────────────┐
@@ -87,7 +87,7 @@ npm SDK 直接 `postMessage`；插件 Content Script **本就能**听到同页�
 | 调用队列 | 页面早于 CS 就绪时缓冲 |
 | `setToken` | 首次设置后缓存（内存；是否 sessionStorage 见待决） |
 | `invoke(command, payload)` | **只传数据**，不实现业务 |
-| 死等 | 仅 `done` / `fail` 结束 Promise；可忽略中间 `progress` |
+| 等待 | 仅 `done` / `fail` 结束 Promise；可忽略中间 `progress` |
 | SDK 超时 | 到期 `reject(TIMEOUT)`，避免 ATS 转圈永不结束 |
 | 错误透出 | `not_installed` / `EXTENSION_RELOADED` / 业务 `fail` 等 |
 | telemetry（可选 API） | **默认经 CRX 转发**插件后端 |
@@ -193,7 +193,7 @@ ATS：loading → `await` → 成功刷新 / 按 `error.code` 提示。
 ### 5.1 长任务
 
 - UI 与超时**对人**提示：只在插件  
-- SDK：**死等**终态；CRX 可发 `progress`，SDK 首发可忽略  
+- SDK：**等待**终态；CRX 可发 `progress`，SDK 首发可忽略  
 - CRX 超时/失败时：页内提示 **且** 必须 `fail` 给 SDK  
 - SDK 自身超时：兜底 `reject`，防止 Promise 悬挂  
 
@@ -275,7 +275,7 @@ ATS：loading → `await` → 成功刷新 / 按 `error.code` 提示。
 | `ready()` | 等 announce |
 | `getCapabilities()` | 命令与版本 |
 | `setToken(token)` | 鉴权 |
-| `invoke(command, payload, opts?)` | 通用调用（死等）；`opts.timeoutMs` 可选 |
+| `invoke(command, payload, opts?)` | 通用调用（等待）；`opts.timeoutMs` 可选 |
 | 状态/错误类型 | 未安装、需刷新、超时等 |
 
 具名糖（如 `publish(positionId)`）可选，内部仍是 `invoke`。
@@ -289,7 +289,7 @@ ATS：loading → `await` → 成功刷新 / 按 `error.code` 提示。
 3. SDK 轻量、尽量一版过；业务与 UI 在 CRX  
 4. 客户业务代码不直接写协议细节  
 5. 框架无关（无 Vue/React 专用包）  
-6. 发布：ATS 传 `positionId`，UI 全在插件，SDK 死等  
+6. 发布：ATS 传 `positionId`，UI 全在插件，SDK 等待  
 7. 一套 SDK，入参区分环境  
 8. 升级提示由 CRX announce / 插件 UI 给出  
 9. 上报经插件后端；直连非默认  
@@ -337,7 +337,7 @@ ATS：loading → `await` → 成功刷新 / 按 `error.code` 提示。
 | **K0** | 冻结契约 | 命令 ID 初表；信封字段与 `ivva-web`/`ivva-crx` 对齐说明；拍板 §13 中 1–4、10 | 内部评审通过；本文 §4/§11/§13 更新 | 无 | [x] |
 | **K1** | SDK 最小可用 | 独立 Git 仓 + npm 包骨架；`createClient` / `ready` / `invoke` / 队列 / 超时 / 错误码；ESM；README 含 UMD 说明 | 无扩展时 `ready` 超时可感知；有扩展时能收到 `announce` | K0 | [x] |
 | **K2** | CRX 桥对齐 | CS：`announce` 补齐 capabilities；`start` 按 command+taskId 回 `done`/`fail`；SF ATS matches 确认；**不**做页面业务注入 | 控制台/临时页：`invoke` 短命令（如 setToken / 探测）通 | K0；现有 `plug.js` | [~] |
-| **K3** | 发布主路径联调 | `position.publish`：ATS 只传 `positionId` → SDK 死等 → PublishHost 全交互 → 终态回 SDK | 顺丰测网：一点发布弹出插件 UI，结束 ATS 能收成功/失败 | K1+K2；S7 PublishHost | [~] |
+| **K3** | 发布主路径联调 | `position.publish`：ATS 只传 `positionId` → SDK 等待 → PublishHost 全交互 → 终态回 SDK | 顺丰测网：一点发布弹出插件 UI，结束 ATS 能收成功/失败 | K1+K2；S7 PublishHost | [~] |
 | **K4** | 首发命令补齐 | 登录态查询、职位状态/上下架、打开侧栏（若纳入首发）、telemetry 经 CRX；`profile` 区分 sf-test/正式 | 命令表所列首发项均能 `invoke` 打通 | K3；S2/S2.5 等已有能力 | [ ] |
 | **K5** | 对外文档与交付 | 更新 [对接文档站](https://www.ivvajob.com/userUrl/api#/index)；CUTOVER 主路径改 SDK；给顺丰安装包+SDK 接入说明；旧 DOM 标废弃 | 顺丰开发按新文档能独立接入 | K4 | [ ] |
 | **K6** | 兼容收敛 | 定旧 `#plug_trigger` 下线周期；双装/升级提示（announce）；可选：与 `ivva_vite` crxBridge 协议收敛 | 新对接零 DOM；旧页仍可撑过过渡期或已迁完 | K5；切流策略 | [ ] |
@@ -374,7 +374,7 @@ K0 契约 ──► K1 SDK 壳 ──┐
 
 - **先 K0**，避免边写边改命令名  
 - **K1 / K2 可并行**（一人 SDK、一人 CRX）  
-- **K3 是对外可用性门槛**（发布死等跑通再谈铺量）  
+- **K3 是对外可用性门槛**（发布等待跑通再谈铺量）  
 - **K5 再推顺丰改主站**；勿在 K3 前大规模让客户改代码  
 
 ---

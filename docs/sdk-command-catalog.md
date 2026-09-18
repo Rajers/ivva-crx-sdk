@@ -42,7 +42,7 @@ const crx = createClient({ profile: 'sf-test' }) // 正式包用 'sf'
 // 登录后准备一次
 await crx.setToken(token) // 建议内部顺带 ready；亦可显式 await crx.ready()
 
-// 业务（死等终态）
+// 业务（等待终态）
 await crx.publish({ positionId: '12345' })
 
 await crx.invoke('position.channelStatus', {
@@ -195,7 +195,7 @@ btn.addEventListener('click', () => {
 - [x] K0 契约 / 命令表  
 - [x] K1 SDK 包（`e:\ivva\ivva-crx-sdk`）  
 - [~] K2 announce + 短 RPC（已接线）  
-- [~] K3 `position.publish` 死等 + PublishHost（已接线，实机持续验）  
+- [~] K3 `position.publish` 等待 + PublishHost（已接线，实机持续验）  
 - [ ] K4 首发命令补齐示例与验收记录（本表 §2 七项）  
 - [ ] K5 对外文档站同步  
 

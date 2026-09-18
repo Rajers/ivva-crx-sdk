@@ -269,7 +269,7 @@ export function createClient(options = {}) {
   }
 
   /**
-   * 死等终态（忽略 progress）
+   * 等待终态（忽略 progress）
    * @param {string} command
    * @param {Record<string, unknown>} [payload]
    * @param {{ timeoutMs?: number }} [opts]
