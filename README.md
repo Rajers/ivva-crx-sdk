@@ -44,7 +44,13 @@ await crx.invoke('channel.loginStatus', {
 })
 
 btn.addEventListener('click', () => {
-  void crx.invoke('sf.openSidePanel', {}) // 全景搜索；须用户手势
+  // 全景搜索（须用户手势）；可预填，详见命令目录 §5.6
+  void crx.invoke('sf.openSidePanel', {
+    mode: 'nl',
+    text: '北京 5年 Java',
+  })
+  // mode: 'job', positionId: '…'
+  // mode: 'upload', fileUrl: 'https://…/resume.pdf'
 })
 ```
 

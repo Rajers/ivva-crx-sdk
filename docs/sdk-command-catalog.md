@@ -10,7 +10,7 @@
 | 4 | 跳转外网职位详情<br>已有 | `position.openExternal`<br>旧：`toPositonDetail` / `toPositionDetail`<br>SDK：`invoke('position.openExternal', …)`<br>payload：`positionId`, `channel`<br>UI：开外网 Tab | 60s |
 | 5 | 获取渠道登录状态<br>已有 | `channel.loginStatus`<br>旧：`getChanneLoginStatus`<br>SDK：`invoke('channel.loginStatus', …)`<br>payload：可选 `channels: ['boss','lp','zl','qc']`<br>UI：无 | 60s |
 | 6 | 设置 ivvaToken（鉴权）<br>**已接线** | `auth.setToken`<br>旧：`setIvvaToken`<br>SDK：`setToken(token)`<br>payload：`token` / `ivvaToken`<br>UI：无 | 15s |
-| 7 | 全景搜索<br>**已接线** | `sf.openSidePanel`<br>旧：`openSidePanel` / `openPanel` / `sidePanel`<br>SDK：`invoke('sf.openSidePanel', {})`<br>payload：`{}`<br>UI：**Side Panel**（仅搜） · **必须用户点击** | 15s |
+| 7 | 全景搜索<br>**已接线** | `sf.openSidePanel`<br>旧：`openSidePanel` / `openPanel` / `sidePanel`<br>SDK：`invoke('sf.openSidePanel', payload)`（须用户点击）<br>payload：见 §5.6（`mode` + `text` / `positionId` / `fileUrl`）<br>UI：**Side Panel**（仅搜） | 15s |
 
 <!-- 附属（同命令族，非独立能力名）：
 
@@ -20,7 +20,7 @@
 | 探测能力 | `crx.getCapabilities` | 拉完整 capabilities |
 | 更新插件 | `crx.updatePlugin` | 旧 `updatePlugin` | -->
 
-**全景搜索说明**：客户首发对外 API = **打开侧栏**；搜条件与结果 UI 全在 Panel。插件内部另有 `resume.search` 等，**暂不作为客户主 API**。
+**全景搜索说明**：客户首发对外 API = **打开侧栏并可选预填**；搜条件解析 / 结果 / 匹配 UI 仍在 Panel。插件内部另有 `resume.search` 等，**暂不作为客户主 API**。`done` 仅表示侧栏已打开（及预填已受理），**不是**搜索结束。
 
 未进首发（后置）：`radar.updateContact`（暂缓）、IM 等。
 
@@ -68,9 +68,14 @@ await crx.invoke('channel.loginStatus', {
   channels: ['boss', 'lp', 'zl', 'qc'],
 })
 
-// 全景搜索：必须在用户点击回调里
+// 全景搜索：必须在用户点击回调里；可按 mode 预填
 btn.addEventListener('click', () => {
-  void crx.invoke('sf.openSidePanel', {})
+  void crx.invoke('sf.openSidePanel', {
+    mode: 'nl',
+    text: '北京 5年 Java 本科',
+  })
+  // mode: 'job', positionId: '12345'
+  // mode: 'upload', fileUrl: 'https://…/resume.pdf', fileName: 'a.pdf'
 })
 ```
 
@@ -166,11 +171,74 @@ btn.addEventListener('click', () => {
 
 ### 5.6 sf.openSidePanel
 
+打开 Side Panel（全景搜索）。**必须在用户点击回调中** `invoke`，否则 Chrome 可能拒绝 `sidePanel.open`。
+
+`done` = 侧栏已打开（预填已交给 Panel）；搜索过程与结果只在插件内，不经本 Promise 返回列表。
+
+#### 公共字段
+
+| 字段 | 说明 |
+|------|------|
+| `mode` | `nl` 自然语言 · `job` 职位搜索 · `upload` 上传简历搜索；省略则打开默认 Tab（自然语言），不预填 |
+
+三种 `mode` **互斥预填**（一次只传一种业务入参）。
+
+#### 自然语言（`mode: 'nl'`）
+
+| 字段 | 必填 | 说明 |
+|------|------|------|
+| `text` | 是* | 自然语言搜条件；别名 `txt` |
+| `txt` | — | 同 `text` |
+
+```json
+{
+  "mode": "nl",
+  "text": "北京 5年 Java 本科"
+}
+```
+
+#### 职位搜索（`mode: 'job'`）
+
+| 字段 | 必填 | 说明 |
+|------|------|------|
+| `positionId` | 是 | ATS 职位主键；插件按职位拆解 JD 后寻访 |
+
+```json
+{
+  "mode": "job",
+  "positionId": "12345"
+}
+```
+
+#### 上传简历搜索（`mode: 'upload'`）
+
+ATS **不传本地文件 / base64**，只传**可下载地址**；插件拉取文件后走现有 LLM 上传解析接口，再在 Panel 内搜索。
+
+| 字段 | 必填 | 说明 |
+|------|------|------|
+| `fileUrl` | 是 | 简历下载 URL（HTTPS GET）；别名 `downloadUrl` / `url` |
+| `fileName` | 否 | 文件名（含扩展名，便于解析）；无则从 `Content-Disposition` 或 URL 推断 |
+| `headers` | 否 | 下载所需请求头（如短时 Token）；扩展**不会**自动带上 ATS 页 Cookie |
+
+```json
+{
+  "mode": "upload",
+  "fileUrl": "https://ats.example.com/api/resume/download?id=xxx",
+  "fileName": "zhang.pdf"
+}
+```
+
+约束（与 Panel 上传 Tab 对齐，实现侧校验）：
+
+- 建议体积 ≤ 20MB；扩展名 `pdf` / `doc` / `docx` / `txt`
+- 下载失败（401/404/跨域未授权等）在 **Panel 内提示**；勿依赖本命令长时间等待解析/搜完
+- 下载域名须在扩展 `host_permissions`（或可选权限）覆盖范围内——联调时与插件侧确认
+
+仅打开侧栏、不预填：
+
 ```json
 {}
 ```
-
-须在用户点击回调中 `invoke`，否则 Chrome 可能拒绝 `sidePanel.open`。
 
 ---
 
@@ -201,7 +269,7 @@ btn.addEventListener('click', () => {
 | Token | SDK 内存 + 交给 CRX |
 | 直连 telemetry | 首发不做 |
 | 旧 DOM | CRX 内短期兼容 |
-| 全景搜 | `sf.openSidePanel`，非裸调 `resume.search` |
+| 全景搜 | `sf.openSidePanel` + 可选 `mode`/`text`/`positionId`/`fileUrl`；非裸调 `resume.search`；上传走下载 URL 而非页面传文件 |
 
 ---
 
@@ -216,4 +284,4 @@ btn.addEventListener('click', () => {
 
 ---
 
-*文档版本：2026-09-17 · 对外 API 总表落档*
+*文档版本：2026-09-18 · 对外 API 总表落档（全景搜预填 + fileUrl）*
