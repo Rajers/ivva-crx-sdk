@@ -257,31 +257,4 @@ ATS **不传本地文件 / base64**，只传**可下载地址**；插件拉取�
 
 ---
 
-## 6. 已拍板默认值
-
-| 项 | 默认 |
-|----|------|
-| 包名 | `@ivva/ivva-crx-sdk` |
-| 命令 ID | Next 风格；旧 status 作别名 |
-| publish 入参 | 最小 `positionId`；其余插件内 |
-| 超时 | 见 §1 |
-| 双装 | `profile` 校验；可选 `expectedExtensionId` |
-| Token | SDK 内存 + 交给 CRX |
-| 直连 telemetry | 首发不做 |
-| 旧 DOM | CRX 内短期兼容 |
-| 全景搜 | `sf.openSidePanel` + 可选 `mode`/`text`/`positionId`/`fileUrl`；非裸调 `resume.search`；上传走下载 URL 而非页面传文件 |
-
----
-
-## 7. 阶段勾选
-
-- [x] K0 契约 / 命令表  
-- [x] K1 SDK 包（`e:\ivva\ivva-crx-sdk`）  
-- [~] K2 announce + 短 RPC（已接线）  
-- [~] K3 `position.publish` 等待 + PublishHost（已接线，实机持续验）  
-- [ ] K4 首发命令补齐示例与验收记录（本表 §1 七项）  
-- [ ] K5 对外文档站同步  
-
----
-
-*文档版本：2026-09-18 · 对外 API 总表落档（全景搜预填 + fileUrl）*
+*文档版本：2026-09-20 · 对外 API 总表（去掉内部默认值/阶段勾选；全景搜预填 + fileUrl）*

@@ -172,7 +172,7 @@ Content Script 校验：`event.source === window`，且 `source` 字段为约定
 
 ## 5. 典型调用（对外心智）
 
-完整能力与 payload 见 [sdk-command-catalog.md §2](./sdk-command-catalog.md)。
+完整能力与 payload 见 [sdk-command-catalog.md](./sdk-command-catalog.md) §1 / §4。
 
 ```js
 import { createClient } from '@ivva/ivva-crx-sdk'
