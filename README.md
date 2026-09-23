@@ -12,6 +12,7 @@
 |------|------|
 <!-- | [docs/customer-sdk-integration.md](./docs/customer-sdk-integration.md) | 对接方案 | -->
 | [docs/sdk-command-catalog.md](./docs/sdk-command-catalog.md) | 对外 API 总表（发布/上下架/状态/详情/登录态/Token/全景搜） |
+| [docs/sf-backend-apis.md](./docs/sf-backend-apis.md) | 顺丰侧需配合：职位详情 + 简历下载 URL（全景搜） |
 
 ## 安装
 
@@ -70,6 +71,8 @@ btn.addEventListener('click', () => {
 
 改源码后本地重编：`npm run build`（需 Node + `npm i`）。
 
+
+
 ## 错误码（常见）
 
 | code | 含义 |
@@ -78,3 +81,4 @@ btn.addEventListener('click', () => {
 | `PROFILE_MISMATCH` | profile / extensionId 不符 |
 | `TIMEOUT` | SDK 侧超时 |
 | `EXTENSION_RELOADED` | 扩展热更，需刷新页面 |
+
