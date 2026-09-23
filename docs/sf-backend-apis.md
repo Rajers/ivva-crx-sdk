@@ -1,13 +1,13 @@
-# 顺丰侧需配合的后端能力（全景搜索）
+# 用户侧需配合的后端能力（全景搜索）
 
-> 面向 **SF 后端 / 中间层**。前端 SDK 用法见 [README](../README.md)、命令总表见 [sdk-command-catalog.md](./sdk-command-catalog.md) §4.6。  
-> 本文只约定：**客户侧要提供/保证什么**；插件如何调用 SDK 不在此展开。
+> 面向 **客户后端 / 中间层**。前端 SDK 用法见 [README](../README.md)、命令总表见 [sdk-command-catalog.md](./sdk-command-catalog.md) §4.6。  
+> 本文只约定：**用户侧要提供/保证什么**；插件如何调用 SDK 不在此展开。
 
-全景搜预填由 ATS 页调用 `sf.openSidePanel` 触发。下列两项由 **SF 侧提供或保证**，插件侧消费。
+全景搜预填由 ATS 页调用 `sf.openSidePanel` 触发。下列两项由 **用户侧提供或保证**，插件侧消费。
 
-| # | 用途 | SF 侧能力 | 插件 / ATS 怎么用 |
-|---|------|-----------|-------------------|
-| 1 | 按职位搜索 | 按 SF 职位 ID 返回职位详情（字段兼容 ATS `getPositionDetail`） | ATS：`invoke('sf.openSidePanel', { mode:'job', positionId })` → 插件再拉详情拆 JD |
+| # | 用途 | 用户侧能力 | 插件 / ATS 怎么用 |
+|---|------|------------|-------------------|
+| 1 | 按职位搜索 | 按用户侧职位 ID 返回职位详情（字段兼容 ATS `getPositionDetail`） | ATS：`invoke('sf.openSidePanel', { mode:'job', positionId })` → 插件再拉详情拆 JD |
 | 2 | 按简历搜索 | 提供 **HTTPS 可 GET 的简历原件下载地址**（二进制文件流） | ATS：`invoke('sf.openSidePanel', { mode:'upload', fileUrl, fileName? })` → 插件下载后解析再搜 |
 
 ---
@@ -18,7 +18,7 @@
 
 插件在收到 `positionId` 后，需要拿到与现有 ATS **`/position/getPositionDetail`** 同形的职位数据，才能拆解 JD 并生成搜条件。
 
-请 SF 保证其一：
+请用户侧保证其一：
 
 - 在插件配置的 `ajaxUrl` 上实现兼容接口；或  
 - 职位已同步至 ivva ATS，插件继续走现有 `getPositionDetail`（入参仍为双方约定的职位主键）。
@@ -30,7 +30,7 @@
 | 项 | 说明 |
 |----|------|
 | 路径 | `/position/getPositionDetail`（或双方约定等价路径） |
-| 入参 | `positionId`（SF / ATS 职位主键，与 SDK 传入一致）；可选 `isSchoolRecruit` |
+| 入参 | `positionId`（用户侧 / ATS 职位主键，与 SDK 传入一致） |
 | 成功 | 与现有 ATS 一致的业务包络；`data` 为职位对象（或可解析出唯一职位对象） |
 
 ### 全景搜至少需要的字段
@@ -61,10 +61,10 @@
 
 ```
 ATS 页 ──SDK──▶ 插件（只传 positionId）
-                  └─▶ SF/ATS 后端 getPositionDetail
+                  └─▶ 用户侧 / ATS 后端 getPositionDetail
 ```
 
-不是「SDK 直接调 SF 接口」；也不是 SF 在 SDK `done` 里回传详情。
+不是「SDK 直接调用户侧接口」；也不是用户侧在 SDK `done` 里回传详情。
 
 ---
 
@@ -72,7 +72,7 @@ ATS 页 ──SDK──▶ 插件（只传 positionId）
 
 ### 职责
 
-按简历搜索时，ATS **不传**本地文件或 base64，只传插件可拉取的下载 URL。SF 需能签发或提供该地址（通常在 ATS 调 SDK 前由业务接口生成）。
+按简历搜索时，ATS **不传**本地文件或 base64，只传插件可拉取的下载 URL。用户侧需能签发或提供该地址（通常在 ATS 调 SDK 前由业务接口生成）。
 
 ### 建议契约
 
@@ -87,7 +87,7 @@ ATS 页 ──SDK──▶ 插件（只传 positionId）
 ### 调用关系
 
 ```
-SF 业务接口 ──生成 fileUrl──▶ ATS 页 ──SDK──▶ 插件 GET fileUrl ──▶ 解析 / 搜
+用户侧业务接口 ──生成 fileUrl──▶ ATS 页 ──SDK──▶ 插件 GET fileUrl ──▶ 解析 / 搜
 ```
 
 「对接」的是 **可下载 URL 能力**，不是再给插件一个「查简历元数据」的 JSON RPC。

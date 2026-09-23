@@ -11,7 +11,7 @@
 | 文档 | 说明 |
 |------|------|
 | [docs/sdk-command-catalog.md](./docs/sdk-command-catalog.md) | 对外 API 总表（发布/上下架/状态/详情/登录态/Token/全景搜） |
-| [docs/sf-backend-apis.md](./docs/sf-backend-apis.md) | 顺丰侧需配合：职位详情 + 简历下载 URL（全景搜） |
+| [docs/sf-backend-apis.md](./docs/sf-backend-apis.md) | 用户侧需配合：职位详情 + 简历下载 URL（全景搜） |
 
 ## 安装
 
